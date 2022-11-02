@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export const AppContext = createContext();
 
-export default function AppContextProvider( props ) {
+const AppContextProvider = ( props ) => {
 	const [ playlist, setPlaylist ] = useState( [] );
 	const [ socket, setSocket ] = useState( null );
 
@@ -13,6 +13,8 @@ export default function AppContextProvider( props ) {
 		</AppContext.Provider>
 	);
 }
+
+export default AppContextProvider;
 
 AppContextProvider.propTypes = {
 	children: PropTypes.object.isRequired,

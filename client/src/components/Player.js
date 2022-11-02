@@ -37,6 +37,8 @@ export default function Player() {
 				origin: 'http://localhost:3000',
 				events: {
 					onReady: function () {
+						// YouTube will only autoplay muted videos.
+						playerRef.current.mute();
 						playerRef.current.playVideo();
 					},
 					onStateChange: onPlayerStateChange,
@@ -45,20 +47,14 @@ export default function Player() {
 		}
 
 		function onPlayerStateChange( event ) {
-			if ( event.data === window.YT.PlayerState.ENDED && playlist.length > 1 ) {
-				if ( playlist.length && playerRef.current.loadVideoById ) {
+			if ( event.data === window.YT.PlayerState.ENDED ) {
+				if ( playlist.length > 1 ) {
 					playerRef.current.loadVideoById( { videoId: playlist[ 0 ].videoId } );
 				}
 
 				socket.emit( 'delete-item', playlist[ 0 ].id )
 			}
 		}
-
-		// return () => {
-		// 	if ( playerRef.current ) {
-		// 		playerRef.current.destroy();
-		// 	}
-		// };
 	} );
 
 	return (
