@@ -1,6 +1,15 @@
-const sqlite3 = require( 'sqlite3' ).verbose();
-
+const path = require( 'path' );
+const sqlite3 = require( 'sqlite3' );
+const { open } = require( 'sqlite' );
 class ListManager {
+	constructor( dbPath ) {
+		if ( dbPath ) {
+			this.dbPath = dbPath;
+		} else {
+			this.dbPath = path.resolve( __dirname, '../db.sqlite' );
+		}
+	}
+
 	async getDB() {
 		if ( ! this.db ) {
 			this.db = await this.openDB();
@@ -10,37 +19,41 @@ class ListManager {
 	}
 
 	async openDB() {
-		this.db = new sqlite3.Database( './db.sqlite', ( err ) => {
-			if ( err ) {
-				return console.error( err.message );
-			}
-		
-			console.log( 'Connected to the. SQlite database.' );
-		} );
+		const db = await open( {
+			filename: this.dbPath,
+			driver: sqlite3.Database
+		} )
 
-		await this.db.run( 'CREATE TABLE IF NOT EXISTS playlist (id INTEGER PRIMARY KEY AUTOINCREMENT, item TEXT)' );
+		await db.run( 'CREATE TABLE IF NOT EXISTS playlist (id INTEGER PRIMARY KEY AUTOINCREMENT, videoID TEXT)' );
 
-		return this.db;
+		return db;
 	}
 
 	async getItems() {
-		const db = this.getDB();
-
 		try {
-			return await db.all( 'SELECT * FROM playlist' );
-		}
-		catch ( err ) {
-			console.log( err.message );
+			const db = await this.getDB();
 
-			return [];
+			return await db.all( 'SELECT * FROM playlist', ( err, rows ) => {
+				if ( err ) {
+					throw err;
+				}
+
+				return rows;
+			} );
+		} catch ( err ) {
+			console.log( err );
 		}
 	}
 
-	async addItem( item ) {
+	async addItem( videoID ) {
 		try {
-			// const newItem = new ListItem( item );
+			const db = await this.getDB();
 
-			// await newItem.save();
+			await db.run( 'INSERT INTO playlist (videoID) VALUES (?)', [ videoID ], ( err ) => {
+				if ( err ) {
+					throw err;
+				}
+			} );
 
 			console.log( 'item saved' );
 		}
@@ -51,7 +64,13 @@ class ListManager {
 
 	async deleteItem( id ) {
 		try {
-			//await ListItem.deleteOne( { _id: id } );
+			const db = await this.getDB();
+
+			await db.run( 'DELETE FROM playlist WHERE id = (?)', [ id ], ( err ) => {
+				if ( err ) {
+					throw err;
+				}
+			} );
 
 			console.log( 'item deleted' );
 		}
@@ -61,4 +80,4 @@ class ListManager {
 	}
 }
 
-module.exports = new ListManager();
+module.exports = ListManager;

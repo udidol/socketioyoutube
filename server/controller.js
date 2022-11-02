@@ -2,24 +2,30 @@ const express = require( 'express' );
 const router = express.Router();
 const ListManager = require( './models/list-manager.js' );
 
+const listManager = new ListManager();
+
+router.get( "/", ( req, res ) => {
+	res.send( { response: "I am alive" } ).status( 200 );
+} );
+
 router.get( '/api/list' , async ( req, res ) => {
-	const items = await ListManager.getItems();
+	const items = await listManager.getItems();
 
 	res.json( items );
 } );
 
 router.post( '/api/add-item', async ( req, res ) => {
-	ListManager.addItem( req.body.item );
+	listManager.addItem( req.body.item );
 
-	const items = await ListManager.getItems();
+	const items = await listManager.getItems();
 
 	res.json( items );
 } );
 
 router.post( '/api/delete-item', async ( req, res ) => {
-	await ListManager.deleteItem( req.body.id );
+	await listManager.deleteItem( req.body.id );
 
-	const items = await ListManager.getItems();
+	const items = await listManager.getItems();
 
 	res.json( items );
 } );

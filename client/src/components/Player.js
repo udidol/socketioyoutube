@@ -1,45 +1,68 @@
-export default function Player( props ) {
-	const { videoId } = props;
+import { useContext, useMemo, useRef, useEffect } from 'react';
+import { AppContext } from '../context';
+import YTManager from '../utils/youtube-manager';
 
-	// generate a youtube player
-	const player = useRef( null );
+export default function Player() {
+	const appContext = useContext( AppContext );
+	const { playlist, socket } = appContext;
 
-	// when the component mounts, create a player
-	useEffect( () => {
-		// create a new player
-		player.current = new window.YT.Player( 'player', {
-			height: '390',
-			width: '640',
-			videoId: 'M7lc1UVf-VE',
-			events: {
-				onReady: onPlayerReady,
-				onStateChange: onPlayerStateChange,
-			},
-		} );
+	const playerRef = useRef();
+
+	const Youtube = useMemo( () => {
+		return new YTManager();
 	}, [] );
 
-	// when the videoId changes, load the new video
 	useEffect( () => {
-		if ( videoId ) {
-			player.current.loadVideoById( videoId );
+		// when the component mounts, create a player
+		if ( ! playlist.length ) {
+			return;
 		}
-	}, [ videoId ] );
-	
-	// when the player is ready, load the first video
-	function onPlayerReady( event ) {
-		event.target.loadVideoById( videoId );
-	}
 
-	// when the player state changes, update the videoId
-	function onPlayerStateChange( event ) {
-		if ( event.data === window.YT.PlayerState.PLAYING ) {
-			setVideoId( event.target.getVideoData().video_id );
+		if ( ! Youtube.isApiLoaded() ) {
+			window.onYouTubeIframeAPIReady = () => {
+				setCurrentPlayer();
+			};
+		} else {
+			setTimeout( () => setCurrentPlayer(), 1000 );
 		}
-	}
+
+		function setCurrentPlayer() {
+			playerRef.current = new window.YT.Player( `youtube-player-${ playlist[ 0 ].id }`, {
+				height: '100%',
+				width: '100%',
+				videoId: playlist[ 0 ].videoID,
+				mute: 1,
+				autoplay: 1,
+				origin: 'http://localhost:3000',
+				events: {
+					onReady: function () {
+						playerRef.current.playVideo();
+					},
+					onStateChange: onPlayerStateChange,
+				},
+			} );
+		}
+
+		function onPlayerStateChange( event ) {
+			if ( event.data === window.YT.PlayerState.ENDED && playlist.length > 1 ) {
+				if ( playlist.length && playerRef.current.loadVideoById ) {
+					playerRef.current.loadVideoById( { videoId: playlist[ 0 ].videoId } );
+				}
+
+				socket.emit( 'delete-item', playlist[ 0 ].id )
+			}
+		}
+
+		// return () => {
+		// 	if ( playerRef.current ) {
+		// 		playerRef.current.destroy();
+		// 	}
+		// };
+	} );
 
 	return (
-		<div className="player">
-			<div id="player" ref={ player }></div>
+		<div className="player" key= { playlist[ 0 ]?.id }>
+			{ playlist.length ? <div ref={ playerRef } id={ `youtube-player-${ playlist[ 0 ]?.id || '' }` } /> : null }
 		</div>
 	);
 }
