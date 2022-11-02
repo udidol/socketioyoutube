@@ -19,3 +19,7 @@ To run the Client in a dev environment:
 3. To start the front end devserver on `localhost:3000`, run `npm start`.
 4. Leave the terminal open while using the app.
 
+### Unit Tests
+Client tests are run using Jest.
+To run the Client unit tests, open a new terminal, then navigate to the `/client` directory, and once in there, run `npm test`.
+
