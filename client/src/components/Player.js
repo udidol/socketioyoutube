@@ -32,6 +32,7 @@ export default function Player() {
 				width: '100%',
 				videoId: playlist[ 0 ].videoID,
 				mute: 1,
+				controls: 0,
 				autoplay: 1,
 				origin: 'http://localhost:3000',
 				events: {
