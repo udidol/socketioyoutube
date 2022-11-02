@@ -15,5 +15,4 @@ Leave the terminal open while using the app.
 
 ### Unit Tests
 Server tests are run using Jest.
-To run the Server unit tests
-, open a new terminal, then navigate to the `/server` directory, and once in there, run `npm test`.
+To run the Server unit tests, open a new terminal, then navigate to the `/server` directory, and once in there, run `npm test`.
