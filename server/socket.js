@@ -18,7 +18,7 @@ function socket( server ) {
 		} );
 
 		socket.on( 'add-item', async ( data ) => {
-			listManager.addItem( data.videoID );
+			await listManager.addItem( data.videoID );
 
 			const items = await listManager.getItems();
 

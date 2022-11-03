@@ -15,7 +15,7 @@ router.get( '/api/list' , async ( req, res ) => {
 } );
 
 router.post( '/api/add-item', async ( req, res ) => {
-	listManager.addItem( req.body.item );
+	await listManager.addItem( req.body.item );
 
 	const items = await listManager.getItems();
 
