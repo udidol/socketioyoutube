@@ -1,5 +1,7 @@
 import { useContext, useMemo, useRef, useEffect } from 'react';
 import { AppContext } from '../context';
+import config from '../config';
+
 import YTManager from '../utils/youtube-manager';
 
 export default function Player() {
@@ -34,7 +36,7 @@ export default function Player() {
 				mute: 1,
 				controls: 0,
 				autoplay: 1,
-				origin: 'http://localhost:3000',
+				origin: config.clientURL,
 				events: {
 					onReady: function () {
 						// YouTube will only autoplay muted videos.
