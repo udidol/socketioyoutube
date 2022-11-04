@@ -1,5 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { AppContext } from '../context';
+import config from '../config';
+
 import ListItem from './List-item';
 
 export default function Playlist() {
@@ -7,7 +9,7 @@ export default function Playlist() {
 	const { socket, playlist, setPlaylist } = appContext;
 
 	useEffect( () => {
-		fetch( 'http://localhost:5000/api/list' )
+		fetch( config.serverURL + '/api/list' )
 			.then( ( response ) => response.json() )
 			.then( ( data ) => {
 				setPlaylist( data );
