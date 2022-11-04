@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../context';
 import YTManager from '../utils/youtube-manager';
 
@@ -7,7 +7,22 @@ export default function AddressBar() {
 	const appContext = useContext( AppContext );
 	const { socket } = appContext;
 
-	const onAddButtonClick = () => {
+	useEffect( () => {
+		function callAddItem( event ) {
+			if ( event.key === 'Enter' ) {
+				addItem();
+			}
+		}
+
+		// add item on enter key up
+		document.addEventListener( 'keyup', callAddItem );
+
+		return () => {
+			document.removeEventListener( 'keyup', callAddItem );
+		};
+	} );
+
+	const addItem = () => {
 		if ( ! address ) {
 			return;
 		}
@@ -32,7 +47,7 @@ export default function AddressBar() {
 				value={ address }
 				onChange={ ( event ) => setAddress( event.target.value ) }
 			/>
-			<div className="add-button" onClick={ onAddButtonClick }>Add</div>
+			<div className="add-button" onClick={ addItem }>Add</div>
 		</div>
 	);
 }
