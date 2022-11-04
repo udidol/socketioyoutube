@@ -8,6 +8,13 @@ export default class YTManager {
 	}
 
 	getVideoIDFromUrl( url ) {
-		return url.match( this.getURLRegex() )[ 1 ];
+		const regex = this.getURLRegex();
+		const match = url.match( regex );
+
+		if ( match ) {
+			return match[ 1 ];
+		}
+
+		return false;
 	}
 }
