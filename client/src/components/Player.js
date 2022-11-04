@@ -50,7 +50,7 @@ export default function Player() {
 
 		function onPlayerStateChange( event ) {
 			if ( event.data === window.YT.PlayerState.ENDED ) {
-				if ( playlist.length > 1 ) {
+				if ( playlist.length > 1 && playerRef.current.loadVideoById ) {
 					playerRef.current.loadVideoById( { videoId: playlist[ 0 ].videoId } );
 				}
 
