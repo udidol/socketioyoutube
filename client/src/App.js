@@ -11,7 +11,7 @@ import Player from './components/Player';
 
 function App() {
 	const appContext = useContext( AppContext );
-	const ENDPOINT = config.clientURL;
+	const ENDPOINT = config.serverURL;
 	const { setSocket } = appContext;
 
 	useEffect( () => {
