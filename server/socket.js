@@ -22,8 +22,6 @@ function socket( server ) {
 
 			const items = await listManager.getItems();
 
-			console.log( 'items after add', items );
-
 			io.sockets.emit( 'update-list', items );
 		} );
 
@@ -31,8 +29,6 @@ function socket( server ) {
 			await listManager.deleteItem( id );
 
 			const items = await listManager.getItems();
-
-			console.log( 'items after delete', items );
 
 			io.sockets.emit( 'update-list', items );
 		} );
